@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="../resources/js/jquery-3.7.1.js" type="text/javascript"></script>
+</head>
+<body>
+    <button data-role="xhr">XHR</button>
+    <button data-role="ajax">AJAX</button>
+    <button data-role="fetch">FETCH</button>
+    <button onclick="innerbody.innerHTML='';">CLEAR</button>
+    
+<!--     form태그의 용도 : 서버로 뭔가를 넘기겠다 => action 속성을 이용 -->
+    <form id="testForm" action="formDataProcess.do" method="get">
+    	<input type="text" name="param1" placeholder="param1">	<!-- name속성은 파라미터의 이름, json속성의 이름, part의 이름이 됨 -->
+    	<input type="text" name="param2" placeholder="param2">
+    	<button type="submit">동기전송</button>
+    </form>
+    
+    <span id="loadingarea" style="display: none;">
+        <img src="../resources/images/1.gif">
+    </span>
+    <div id="innerbody">
+    
+    </div>
+<script>
+//XHR과 $.ajax()는 똑같이 작동함
+
+    let fnOwner = {
+        fn_xhr : function(){
+        	let xhr = new XMLHttpRequest(); //UNSENT 상태 (XHR객체가 생성되는 단계)
+        	xhr.onreadystatechange = function(event){	//익명함수냐, 화살표험수(this=윈도우객체)냐에 따라 this가 달라짐
+//         		let xhr = event.target;
+				if(xhr.readyState = XMLHttpRequest.DONE){	//응답 로딩이 다 끝났다는 의미
+					if(xhr.status == 200)
+						innerbody.innerHTML = xhr.responseText;
+				}	
+            };
+            
+        	let formData = new FormData(testForm);
+        	let body = new URLSearchParams(formData);
+        	let url = testForm.action + "?" + body.toString();
+        	xhr.open(testForm.method, url);	/* OPENED 상태 (Request Line을 셋팅함) */
+        	xhr.setRequestHeader("Accept", "text/html");//클라이언트에 보내지는 응답에 영향을 주는 MIME TYPE셋팅
+        	xhr.send(body);	//Header - receive - loading - done로 상태가 변경됨
+        },
+        fn_ajax : function(){
+        	let body = $(testForm).serialize();
+        	$.ajax({
+        		url:testForm.action,
+                method:testForm.method,
+                dataType:"html",
+                data:body,
+                success:function(html){	//readystate == 4와, fetch()의 then과 같은 작업
+                	innerbody.innerHTML = html;
+                },
+
+        	});
+        	
+        },
+        fn_fetch : function(){
+        	let formData = new FormData(testForm);
+        	let body = new URLSearchParams(formData);
+        	let url = testForm.action + "?" + body.toString();
+        	fetch(url).then(resp=>{
+        		if(resp.ok){
+        			return resp.text();
+        		}
+        	}).then(html=>innerbody.innerHTML=html)
+        }
+    }
+    
+    //2 $.ajax case
+    //3. fetch case
+    document.querySelectorAll("[data-role]").forEach((el, idx)=>{
+        el.addEventListener("click", (event)=>{
+            // console.log(event.target.dataset.role);
+            // console.log(event.target.dataset['role']);
+            let role = event.target.dataset['role'];	//연관배열구조
+            fnOwner[`fn_${role}`]();
+        });
+    });
+
+</script>
+</body>
+</html>

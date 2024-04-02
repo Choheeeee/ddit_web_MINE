@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>MybatisProject</display-name>
+  <welcome-file-list>
+    <welcome-file>index.do</welcome-file>
+  </welcome-file-list>
+  
+  <listener>
+  	<listener-class>kr.or.ddit.listener.CustomServletContextHttpSessionListener</listener-class>
+  </listener>
+  <filter>
+  
+  	<filter-name>CharacterEncodingFilter</filter-name>
+  	<filter-class>kr.or.ddit.filter.CharacterEncodingFilter</filter-class>
+  	<init-param>
+  		<param-name>encoding</param-name>
+  		<param-value>UTF-8</param-value>
+  	</init-param>
+  	<init-param>
+  		<param-name>forced</param-name>
+  		<param-value>true</param-value>
+  	</init-param>
+  </filter>
+  <filter-mapping>
+  	<filter-name>CharacterEncodingFilter</filter-name>
+  	<url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter>
+  	<filter-name>GeneratePrincipalFilter</filter-name>
+  	<filter-class>kr.or.ddit.principal.GeneratePrincipalFilter</filter-class>
+  </filter>
+  <filter-mapping>
+  	<filter-name>GeneratePrincipalFilter</filter-name>
+  	<url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter>
+  	<filter-name>AuthenticationCheckFilter</filter-name>
+  	<filter-class>kr.or.ddit.filter.auth.AuthenticationCheckFilter</filter-class>
+  </filter>
+ <filter-mapping>
+ 	<filter-name>AuthenticationCheckFilter</filter-name>
+ 	<url-pattern>/*</url-pattern>
+ </filter-mapping>
+ <filter>
+ 	<filter-name>AuthorizationCheckFilter</filter-name>
+ 	<filter-class>kr.or.ddit.filter.auth.AuthorizationCheckFilter</filter-class>
+ </filter>
+ <filter-mapping>
+ 	<filter-name>AuthorizationCheckFilter</filter-name>
+ 	<url-pattern>/*</url-pattern>
+ </filter-mapping>
+</web-app>

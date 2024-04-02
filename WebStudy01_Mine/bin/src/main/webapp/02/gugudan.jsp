@@ -1,0 +1,101 @@
+<%@page import="java.text.MessageFormat"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+ <%!
+StringBuffer gugudan(int dan, int mul){
+	
+	StringBuffer trTags = new StringBuffer();
+	
+	for(dan = 2; dan <=9; dan++){
+		trTags.append("<tr>");
+		for(mul = 1; mul <= 9; mul++){
+			trTags.append(MessageFormat.format("<td>{0}*{1}={2}</td>", dan, mul, dan*mul));
+		}	
+		trTags.append("</tr>");
+	}
+	return trTags;
+}
+%>
+
+<%
+	String minParam = request.getParameter("minDan");
+	String maxParam = request.getParameter("maxDan");
+	int status = 200;
+	int minDan = 2;
+	if(minParam !=null && !minParam.trim().isEmpty()){
+		try{
+		minDan = Integer.parseInt(minParam);
+		}catch(NumberFormatException e){
+			status = 400;
+		}
+	}
+	int maxDan = 13;
+	if(maxParam !=null && !maxParam.trim().isEmpty()){
+		try{
+		maxDan = Integer.parseInt(maxParam);
+		}catch(NumberFormatException e){
+			status = 400;
+		}
+	}
+	
+	if(status != 200){
+		response.sendError(status);
+		return;
+	}
+%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+	table{
+		border-collapse: separate;
+	}
+	td{
+		border: 1px solid pink;
+	}
+</style>
+</head>
+<body>
+<!-- 2단부터 9단까지의 구구단을 table태그로 출력하시오.
+단, 하나의 tr태그에서는 하나의 값만 출력하는 8*9 table. -->
+
+<form name="gugudanForm">
+	<input type="number" name="minDan" min="2" max="13" placeholder="최소단">
+	<select name="maxDan">
+		<%
+			for(int number=2; number <= 13; number++){
+				out.println(
+					MessageFormat.format("<option value=''{0}''>{0}단</option>", number)
+				);
+			}
+		%>
+	</select>
+	<button type="submit">구구단줫!!</button>
+</form>
+<table>
+<%=gugudan(minDan, maxDan) %>
+</table>
+
+
+<table>
+<%
+	StringBuffer trTags = new StringBuffer();
+	for(int dan=minDan; dan<= maxDan; dan++){
+		trTags.append("<tr>");
+		for(int mul = 1; mul <= 9; mul++){
+			trTags.append(MessageFormat.format("<td>{0}*{1}={2}</td>", dan, mul, dan*mul));
+		}	
+		trTags.append("</tr>");
+	}
+	out.println(trTags);
+%>
+
+</table>
+<script type="text/javascript">
+	document.gugudanForm.minDan.value = <%=minDan%>;
+	document.gugudanForm.maxDan.value = <%=maxDan%>;
+</script>
+</body>
+</html>

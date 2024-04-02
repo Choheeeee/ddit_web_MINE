@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd" >
+<tiles-definitions>
+  <definition name="adminParent" template="/WEB-INF/layoutAdmin.jsp">
+  	<put-attribute name="title" value="ADMIN"/>
+  </definition>
+  <definition name="userParent" template="/WEB-INF/layoutUser.jsp">
+  	<put-attribute name="title" value="USER"/>
+  </definition>
+  
+  
+  <definition name="admin:*" extends="adminParent">
+  	<put-attribute name="content" value="/WEB-INF/views/{1}.jsp"/>
+  </definition>
+  
+  <definition name="user:*" extends="userParent">
+  <put-attribute name="content" value="/WEB-INF/views/{1}.jsp"/>
+  </definition>
+</tiles-definitions>

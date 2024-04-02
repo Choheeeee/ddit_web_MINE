@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+
+<!-- 하위컨테이너를 위한 설정파일!!! -->
+
+	<mvc:annotation-driven validator="validator"/>
+	
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" 
+		p:validationMessageSource-ref="messageSource"
+	/>
+	
+	<!-- DAO등은 상위컨테이너에 등록돼야하고, Controller등은 하위컨테이너에 등록돼야 한다. 이렇게 두 구조로 나눠져있으니 스캔도 따로 해야한다. 그래서 use-default-filters를 false로 하고, 여기 하위컨테이너를 위한 설정파일에서 필요한 Controller만 include함. -->
+	<context:component-scan base-package="kr.or.ddit" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	<util:constant id="disableFeature" static-field="com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS"/>
+	<bean id="jackson2ObjectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
+		<property name="featuresToDisable">
+			<array>
+				<ref bean="disableFeature"/>
+			</array>
+		</property>
+	</bean>
+	<bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" 
+		p:objectMapper-ref="jackson2ObjectMapper"
+	/>
+	
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver"
+		p:order="1"
+	/>
+	<mvc:tiles-configurer>
+		<mvc:definitions location="/WEB-INF/tiles/kch-tiles.xml"/>
+	</mvc:tiles-configurer> <!--definition이 있는 위치정보  -->
+	<mvc:view-resolvers order="2">
+		<mvc:content-negotiation>
+			<mvc:default-views>
+				<ref bean="jsonView"/>
+			</mvc:default-views>
+		</mvc:content-negotiation>
+		<mvc:tiles/>	<!--타일즈 뷰리졸버 등록함 => 얘가 로지컬뷰네임대로 definition name을 검색하고, 매치되는게 없으면, mvc:jsp가 작동함.  -->
+		<mvc:jsp prefix="/WEB-INF/views/" suffix=".jsp"/>
+	</mvc:view-resolvers>
+	
+	<mvc:resources location="/resources/" mapping="/resources/**" cache-period="0" />
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+		p:maxUploadSizePerFile="#{1024*1024*10}"
+	/>
+	
+</beans>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
+		
+	<!-- 
+	
+	HandlerMapping : 컨트롤러(POJO) 객체와 핸들러 메소드를(@RequestMapping) trace하고, 해당 정보로 map을 형성
+	HandlerAdapter : 핸들러메서드를 실행해주는 핸들러 메소드의 호출자 
+		- HandlerMethodArgumentResolver : 핸들러 메소드의 인자를 해결하기 위한 전략
+		- HandlerMethodReturnValueHandler : 핸들러 메소드 내에서 반환되는 객체를 처리하는 전략
+	ViewResolver : 핸들러 메서드내에서 결정된 뷰에 대한 정보(logical view name)을 해결하는 전략 
+	
+	-->
+	<mvc:annotation-driven validator="validator"/>	<!-- 이 어노테이션은 이미 13개의 객체를 등록해주는데, 위의 3개 객체를 포함하므로 이것들을 등록하기위한 설정 -->
+	
+	
+	
+	<!-- HibernatedValidator가 이 메세지소스를 씀.  -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"
+		p:basenames="kr.or.ddit.message.ErrorMessages"
+	/>
+	
+	<!-- HibernatedValidator를 빈으로 등록하고, setter로 위의 messageSource를 주입받음 / 그리고 HandlerAdapter가 이 validator를 불러다 씀  -->
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"
+		p:validationMessageSource-ref="messageSource"
+	/>
+	
+	<context:component-scan base-package="kr.or.ddit" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+	</context:component-scan>
+	
+	<!-- JsonViewServlet의 역할을 그대로 해주는 객체를 빈으로 등록함 -->
+	<bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"></bean>
+	
+	<!-- BeanNameViewResolver 등록 : 뷰네임과 매칭되는 빈의 id가 있으면, 해당빈을 뷰레이어로 사용함 -->
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" 
+		p:order="1"
+	/>
+	
+	<mvc:tiles-configurer>
+		<mvc:definitions location="/WEB-INF/tiles/*-tiles.xml"/>
+	</mvc:tiles-configurer>
+	<!-- view-resolver는 BeanNameViewResolver 빈을 갖고 있는데, 뷰를 연결해줄때 이 빈이 먼저 작동하고 우리가 지정한 로지컬뷰네임과 
+		등록해놓은빈의 id(jsonView)를 비교하고, id에 해당하는 뷰를 찾지 못했으면 뷰를 협상해주는 content-negotiation에게 넘기고, Accept헤더에 따라 뷰를 지정해줌.-->
+	<mvc:view-resolvers order="2"> 
+		<mvc:content-negotiation>
+			<mvc:default-views>
+				<ref bean="jsonView"/> 
+			</mvc:default-views>
+		</mvc:content-negotiation>
+		<mvc:tiles/>
+		
+		<!-- InternalResourceVewResolver 등록 (InternalResource는 웹자원 즉 html / jsp 등을 의미하고, 이것을 뷰 레이어로 사용함) -->
+		<mvc:jsp prefix="/WEB-INF/views/" suffix=".jsp"/>
+		
+	</mvc:view-resolvers>
+	
+	
+<!-- 
+	p:cookieName="localeCookie" = 심을 쿠키의 이름	
+	p:cookiePath="/"는 서버사이드에 발생하는 모든 요청에 다 이 쿠키를 실어 보내겠다는 의미 
+-->
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" 
+		p:cookieName="localeCookie"
+		p:cookiePath="/"
+		p:cookieMaxAge="#{60*60*24*3}"
+ 	/> 
+
+
+<!--
+	브라우저를 꺼도 이 로케일이 몇일동안 유지되려면, 쿠키나 세션같은 전략객체가 필요함 
+	로케일정보를 저장하더라도 서버에 부하가 없어야하고 이틀동안 살아있어야함. 이 조건을 만족하는건 Session과 Cookie중에 Cookie임. 
+-->
+	<mvc:interceptors>	<!-- WAS의 필터체인같은 개념인데, spring에선 interceptor -->
+		<mvc:interceptor>
+			
+			<!-- 이 필터가 실행되는 url = 모든 url-->
+			<mvc:mapping path="/**"/>
+			
+			<!-- paramName="lang" 이 이름으로 된 파라미터가 오면, 이 필터를 실행시키라는 식별자역할. -->
+			<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"
+				p:paramName="lang"
+			/>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+	<!-- 기억해야할 것!! id속성 => 이 MultipartResolver는 어댑터가 id속성으로 식별해 가져다 씀. -->
+	<!-- MultipartResolver : multipart 요청을 파싱해서 문자 기반의 파트는 parameter로 만들고,
+							file 기반의 파트는 MultipartFile 타입 객체로 캡슐화함 
+							-> MultipartHttpServletRequest타입의 wrapper request를 생성함
+	-->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+	/>
+	
+	<!-- 정적자원을 핸들링하는 handler -->
+	<mvc:resources location="/resources/" mapping="/resources/**" cache-period="0"></mvc:resources>
+</beans>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="employeeDAOImpl_Oracle" class="kr.or.ddit.payment.dao.EmployeeDAOImpl_Oracle"/>
+	<bean id="employeeDAOImpl_Maria" class="kr.or.ddit.payment.dao.EmployeeDAOImpl_Maria"/>
+	<bean id="paymentService" class="kr.or.ddit.payment.service.PaymentServiceImpl">
+		<property name="empDAO" ref="employeeDAOImpl_Maria" />
+		<property name="salDAO">
+			<bean class="kr.or.ddit.payment.dao.SalaryDAOImpl"/>
+		</property>
+	</bean>
+	
+	<bean id="payMonthlyView" class="kr.or.ddit.payment.view.PayMonthlyView"/>
+	<bean id="receiveCommandController" class="kr.or.ddit.payment.controller.ReceiveCommandController">
+		<constructor-arg name="service" ref="paymentService"/>
+		<constructor-arg name="view" ref="payMonthlyView"/>
+	</bean>
+	
+</beans>

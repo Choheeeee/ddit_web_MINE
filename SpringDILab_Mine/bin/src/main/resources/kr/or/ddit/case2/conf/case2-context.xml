@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	>
+
+<!-- 컨테이너의 빈 관리 특성 -->
+<!-- 1. 구체적인 설정(scope)이 없는 한 빈을 대상으로 싱글턴으로 관리함 -->
+<!-- 	singlton - 주입횟수와 무관하게 동일한 빈이 주입됨. -->
+<!-- 	prototype( + lazy-init) - 주입될때마다 새로운 객체가 생성되고 주입됨. =>  protoType : 같은 원형으로 생성된 객체가 공통으로 참조하는 공간-->
+<!-- 2. 구체적인 설정(lazy-init)이 없는 한 등록된 모든 빈들을 컨테이너가 생성될때 동시에 생성하고 메모리에 로딩됨 -->
+<!-- 3. bean 객체 생성 순서 제어시 depends-on을 사용하거나, 실제 주입은 이뤄지지 않음 -->
+
+<bean id="bibitan" class="kr.or.ddit.case2.material.Bibitan"/>
+<bean id="shotGun" class="kr.or.ddit.case2.material.ShotGun" />
+
+<bean class="kr.or.ddit.case2.material.Hunter"
+	p:gun-ref="bibitan"
+	init-method="init3"
+	destroy-method="destroy3"
+/>
+
+</beans>

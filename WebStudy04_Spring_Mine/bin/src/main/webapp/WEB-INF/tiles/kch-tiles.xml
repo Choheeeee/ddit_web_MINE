@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd" >
+<tiles-definitions>
+<!-- 레이아웃.jsp엔 5개의 구멍이 있는데 여기서 채워준다. -->
+
+	<!-- 중복되는 패턴이 있는데 definition을 수천개를 만들 수 없음. 상속을 이용해서 해결하는데, 자식은 contentPage만 다르게 함. -->
+	<definition name="abstractParent" template="/WEB-INF/layout.jsp">
+		<put-attribute name="title" value="Company"/>
+		<put-attribute name="preScript" value="/WEB-INF/includee/preScript.jsp"/>
+		<put-attribute name="headerMenu" value="/WEB-INF/includee/headerMenu.jsp"/>
+		<put-attribute name="postScript" value="/WEB-INF/includee/postScript.jsp"/>
+	</definition>
+
+	<!-- 2개의 뎁스를 가진 뷰는 여기를 탄다. -->
+	<definition name="*/*" extends="abstractParent">
+		<put-attribute name="contentPage" value="/WEB-INF/views/{1}/{2}.jsp"/>
+	</definition>
+	
+	
+	
+	<!-- 3개 뎁스 -->
+	<definition name="*/*/*" extends="abstractParent">
+		<put-attribute name="contentPage" value="/WEB-INF/views/{1}/{2}/{3}.jsp"/>
+	</definition>
+	
+	
+	<definition name="index" extends="abstractParent"> 
+		<put-attribute name="contentPage" value="/WEB-INF/views/index.jsp"/>
+	</definition>
+	
+</tiles-definitions>

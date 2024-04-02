@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.or.ddit.dummy.dao.DummyDAO">
+
+	<select id="selectCartList" resultType="CartVO">
+		SELECT
+			CART_MEMBER
+			, CART_NO
+			, CART_PROD
+			, CART_QTY
+		FROM CART
+	</select>
+</mapper>

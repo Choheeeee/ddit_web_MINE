@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Insert title here</title>
+<style type="text/css">
+	span{
+		background-color: silver;
+		border: 1px solid black;
+		margin: 5px 10px 5px 10px;
+	}
+	div{
+		border: 1px solid black;
+		padding: 5px 10px 5px 10px;
+	}
+</style>
+<script type="text/javascript" src="../resources/js/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+<div id="div1">
+	<span id="span1">SPAN1</span>
+	<span id="span2">SPAN2</span>
+</div>
+<div id="div2">
+	<span id="span3">SPAN3</span>
+	<span id="span4">SPAN4</span>
+</div>
+<button id="clickBtn">BUTTON</button>
+<img src="DOM_access.jpg" />
+<script>
+	let $firstDiv = $("body").find("div:first");
+	$(clickBtn).on("click", ()=>{
+		console.log($firstDiv.html());
+	});
+	
+	console.log("dot notation===========================================\n");
+	
+	console.log("document.documentElement", document.documentElement);
+	console.log("document.body", document.body);
+	console.log("document.head", document.head);
+	console.log("document.head.nextElementSibling", document.head.nextElementSibling);
+	console.log("document.body.previousElementSibling", document.body.previousElementSibling);
+	console.log("div1", div1);
+	console.log("div1.parentElement", div1.parentElement);
+	console.log("div1.nextElementSibling", div1.nextElementSibling);
+	console.log("div2.previousElementSibling", div2.previousElementSibling);
+	console.log("span2.parentElement", span2.parentElement);
+	console.log("span3.parentElement.previousElementSibling", span3.parentElement.previousElementSibling);
+	console.log("span3.parentElement.parentElement.children[0]", span3.parentElement.parentElement.children[0]);
+	
+	console.log("\nassocative array===================================================");
+	
+	console.log("document.documentElement", document['documentElement']);
+	console.log("document.body", document['body']);
+	console.log("document.head", document['head']);
+	console.log("document.head.nextElementSibling", document['head']['nextElementSibling']);
+	console.log("document.body.previousElementSibling", document['body']['previousElementSibling']);
+	console.log("div1", div1);
+	console.log("div1.parentElement", div1['parentElement']);
+	console.log("div1.nextElementSibling", div1['nextElementSibling']);
+	console.log("div2.previousElementSibling", div2['previousElementSibling']);
+	console.log("span2.parentElement", span2['parentElement']);
+	console.log("span3.parentElement.previousElementSibling", span3['parentElement']['previousElementSibling']);
+	console.log("span3.parentElement.parentElement.children[0]", span3['parentElement']['parentElement']['children'][0]);
+	
+	console.log("\njquery ===========================================================");
+	
+	console.log("$('html')", $('html'));
+	console.log("$('body')", $('body'));
+	console.log("$('head')", $('head'));
+	console.log("$('head').siblings()", $('head').siblings());
+	console.log("$('head').next('body')", $('head').next('body'));
+	console.log("$('body').siblings()", $('body').siblings());
+	console.log("$('body').prev()", $('body').prev());
+	console.log("div1", div1);
+	console.log("$(div1).parent()", $(div1).parent());
+	console.log("$(div1).next()", $(div1).next());
+	console.log("$(div2)['prev']()", $(div2)['prev']());
+	console.log("$(span2).parents('div:first')", $(span2).parents('div:first'));
+	console.log("$(span3).parent().siblings('div')", $(span3).parent().siblings('div'));
+	console.log("$(span3).parents('body').children('div:first')", $(span3).parents('body').children('div:first'));
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+

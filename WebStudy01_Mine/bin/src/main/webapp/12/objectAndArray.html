@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<p>
+	<input type="text" id="propName" placeholder="프로퍼티 이름">
+	<input type="text" id="propValue" placeholder="프로퍼티 값">
+	<button id="addProperty">프로퍼티 추가</button>
+</p>
+<script type="text/javascript">
+	
+	let obj = {
+			prop1 : "value1",  //property 이름을 식별자로 준것
+			"prop2" : "value2",	//property 이름을 값으로 준것
+			["prop4"]:"value4",
+	};
+	let array = ['a', 'b', 'c'];
+	
+	const printObject = (targetObj)=>{
+		console.log("---------------------------------------------")
+		for(let n in targetObj) console.log(n, targetObj[n]);			//in 연산자 like 일반 for문
+		console.log("---------------------------------------------")
+	}
+	
+	const printArray1 = (targetArray)=>{
+		for(let i = 0; i<targetArray.length; i++){
+			console.log(i, targetArray[i])
+		}
+	}
+	
+	const printArray2 = (targetArray)=>{
+		for(let element of targetArray ) console.log(element);	//of는 연산자가 아니고, 키워드. like 향상된 for문
+	}
+	
+	addProperty.addEventListener("click", ()=>{
+		let name = propName.value;
+		let value = propValue.value;
+		if(!(name in obj)){	//동적언어인 자바스크립트는 객체의 구조가 동적으로 바뀌기 때문에 in연산자가 필요하게됨
+			obj[name] = value;
+			propName.value = "";
+			propValue.value = "";
+			printObject(obj);
+		}
+	});
+</script>
+</body>
+</html>

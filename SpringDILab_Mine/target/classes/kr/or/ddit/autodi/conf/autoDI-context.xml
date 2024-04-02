@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+<!-- 	<context:annotation-config/> --> <!-- component-scan이 이미 annotation-config를 수행하고 있음. -->
+	<context:component-scan base-package="kr.or.ddit.case1" use-default-filters="true">
+<!-- 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/> -->
+	</context:component-scan>
+	
+	
+<!-- 	어노테이션 기반의 자동 주입 구조 -->
+<!-- 	1. 어노테이션 포스트 프로세서가 등록돼야 함. - <context:annotation-config/> -->
+<!-- 	2. 특정 영역의 클래스 중 일정 조건을 만족하는 경우, 빈으로 등록시켜야 함. - <context:component-scan /> -->
+<!-- 		@Component - 나머지 어노테이션에서 공통 적용된 메타 어노테이션으로 컴포넌트 스캐너에서 유일하게 스캔하는 대상 (모든 어노테이션의 상위) -->
+<!-- 		@Repository - DAO -->
+<!-- 		@Service - Service -->
+<!-- 		@Controller - controller에 사용, (컨테이너에 등록되면서 동시에 handler mapping에 의해 수집됨.) -->
+		
+<!-- 		@Configuration -->
+		
+<!-- 		@RestController -->
+<!-- 		@ControllerAdvice -->
+<!-- 		@RestControllerAdvice -->
+
+<!-- 주입을 비롯한 빈의 구체적 설정을 변경할때 사용되는 어노테이션 -->
+<!-- @AutoWired - 관계 형성을 위해 주입에 사용됨 (클래스의 타입으로 검색하므로, 인터페이스에 여러 구현체가 등록돼있을땐 사용 불가) -->
+<!-- 	@Inject == @AutoWired -->
+<!-- @Resource : 주입기준을 동적으로 설정할 수 있음 -->
+<!-- @Required  -->
+<!-- @PostConstruct -->
+<!-- @PreDestroy -->
+</beans>
